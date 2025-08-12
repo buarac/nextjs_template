@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/buarac/nextjs_template/compare/v1.0.0...v1.1.0) (2025-08-12)
+
+
+### Features
+
+* plusieurs corrections et ajout de creation de release ([16a22f0](https://github.com/buarac/nextjs_template/commit/16a22f05e01a701807477dcd45c4c9477c2d2e2b))
+
 # 1.0.0 (2025-08-12)
 
 
