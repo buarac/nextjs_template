@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { APP_NAME, APP_VERSION } from "@/constants";
 
 export default function Home() {
   return (
@@ -52,6 +53,9 @@ export default function Home() {
         </div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
+        <div className="text-sm text-muted-foreground">
+          {APP_NAME} v{APP_VERSION}
+        </div>
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
