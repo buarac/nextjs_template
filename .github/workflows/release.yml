@@ -38,6 +38,9 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Generated version: $VERSION"
 
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
       - name: Build with version
         env:
           NEXT_PUBLIC_VERSION: ${{ steps.version.outputs.version }}
@@ -47,7 +50,7 @@ jobs:
           
       - name: Create build artifact
         run: |
-          tar -czf build.tar.gz .next package.json package-lock.json
+          tar -czf build.tar.gz .next package.json package-lock.json prisma/ ecosystem.config.js scripts/ src/generated/ node_modules/@prisma/ node_modules/.prisma/
           
       - name: Upload build artifact to release
         if: steps.version.outputs.version != 'unknown'
