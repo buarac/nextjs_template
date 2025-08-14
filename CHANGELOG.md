@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/buarac/nextjs_template/compare/v1.2.1...v1.2.2) (2025-08-14)
+
+
+### Bug Fixes
+
+* correction ecosystem.config.js ([072a7cc](https://github.com/buarac/nextjs_template/commit/072a7ccd206c26bbf015dfbc0d735665c59beabc))
+
 ## [1.2.1](https://github.com/buarac/nextjs_template/compare/v1.2.0...v1.2.1) (2025-08-14)
 
 
