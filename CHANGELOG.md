@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/buarac/nextjs_template/compare/v1.2.3...v1.3.0) (2025-08-14)
+
+
+### Features
+
+* separation template et deploiement ([4cc29f1](https://github.com/buarac/nextjs_template/commit/4cc29f1f411b0878e66bd236f6b52b343b343da9))
+
 ## [1.2.3](https://github.com/buarac/nextjs_template/compare/v1.2.2...v1.2.3) (2025-08-14)
 
 
