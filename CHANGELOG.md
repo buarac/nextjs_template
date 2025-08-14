@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/buarac/nextjs_template/compare/v1.3.1...v1.4.0) (2025-08-14)
+
+
+### Features
+
+* amélioration du script de base de données et corrections template ([f72ec41](https://github.com/buarac/nextjs_template/commit/f72ec41a6b6039c2f0336a81a598b89eb8d09171))
+
 ## [1.3.1](https://github.com/buarac/nextjs_template/compare/v1.3.0...v1.3.1) (2025-08-14)
 
 
