@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/buarac/nextjs_template/compare/v1.2.2...v1.2.3) (2025-08-14)
+
+
+### Bug Fixes
+
+* correction deploy.sh ([aaecd8d](https://github.com/buarac/nextjs_template/commit/aaecd8dd7855491941a2ceedd2359d871cc15478))
+
 ## [1.2.2](https://github.com/buarac/nextjs_template/compare/v1.2.1...v1.2.2) (2025-08-14)
 
 
