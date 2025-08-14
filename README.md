@@ -125,16 +125,19 @@ The project supports deployment to multiple environments using PM2:
 APP_NAME=nextjs-staging APP_CWD=/home/buarac/app/nextjs-staging ./scripts/deploy.sh v1.2.3
 ```
 
-**2. Start applications with PM2:**
+**2. Start applications with deployment_tools:**
 ```bash
+# Les outils de déploiement ont été migrés vers deployment_tools
+# Voir DEPLOYMENT.md pour les nouvelles commandes
+
 # Development
-APP_NAME=nextjs-dev APP_CWD=/home/buarac/app/nextjs-dev pm2 start ecosystem.config.js
+../deployment_tools/scripts/dev-start.sh
 
 # Staging  
-APP_NAME=nextjs-staging APP_CWD=/home/buarac/app/nextjs-staging pm2 start ecosystem.config.js --env staging
+../deployment_tools/scripts/staging-deploy.sh v1.x.x
 
 # Production
-APP_NAME=nextjs-stable APP_CWD=/home/buarac/app/nextjs-stable pm2 start ecosystem.config.js --env stable
+../deployment_tools/scripts/prod-deploy.sh v1.x.x
 ```
 
 #### Environment Variables

@@ -1166,7 +1166,7 @@ pm2 show app-dev | grep -A 10 "Environment"
 
 # Redémarrer avec nouvelles variables
 pm2 stop app-dev
-APP_VERSION="new" pm2 start ecosystem.config.js
+APP_VERSION="new" pm2 start ../deployment_tools/environments/dev/pm2.config.js
 ```
 
 ### Développement
