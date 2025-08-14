@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/buarac/nextjs_template/compare/v1.4.0...v1.4.1) (2025-08-14)
+
+
+### Bug Fixes
+
+* Add CREATEDB permission and .env sync for Prisma compatibility ([5e9332a](https://github.com/buarac/nextjs_template/commit/5e9332aca589001ab4a2fe2f62304becb1f90ff0))
+
 # [1.4.0](https://github.com/buarac/nextjs_template/compare/v1.3.1...v1.4.0) (2025-08-14)
 
 
