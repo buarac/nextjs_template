@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/buarac/nextjs_template/compare/v1.3.0...v1.3.1) (2025-08-14)
+
+
+### Bug Fixes
+
+* suppression des references à pm2 ([a5c0ac3](https://github.com/buarac/nextjs_template/commit/a5c0ac3d6e1a73f0b31480869a2537bd01d75941))
+
 # [1.3.0](https://github.com/buarac/nextjs_template/compare/v1.2.3...v1.3.0) (2025-08-14)
 
 
