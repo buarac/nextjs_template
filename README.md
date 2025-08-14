@@ -1,6 +1,12 @@
-# Next.js Modern Template
+# 🚀 Next.js Modern Template
 
-A production-ready Next.js template with modern stack and best practices.
+Template Next.js 15 complet avec authentification, base de données et déploiement multi-environnements intégré.
+
+## 📖 Documentation complète
+
+➡️ **[Guide d'utilisation détaillé](docs/TEMPLATE_GUIDE.md)** - Guide complet de 50+ pages avec tout ce qu'il faut savoir
+
+➡️ **[Guide de déploiement](DEPLOYMENT.md)** - Configuration avec deployment_tools
 
 ## 🚀 Features
 
@@ -85,10 +91,92 @@ npm run dev
 
 ## 🚀 Deployment
 
+### GitHub Actions CI/CD
 The template includes GitHub Actions for:
 - Automated testing and linting
-- Semantic versioning
-- Automated releases
+- Semantic versioning with conventional commits
+- Automated releases with build artifacts
+
+### Multi-Environment PM2 Deployment
+
+The project supports deployment to multiple environments using PM2:
+
+#### Environment Configuration
+- **scratch** (development): Port 3000, NODE_ENV=development
+- **staging** (pre-production): Port 3001, NODE_ENV=production  
+- **stable** (production): Port 3002, NODE_ENV=production
+
+#### Directory Structure
+```bash
+/home/buarac/app/
+├── nextjs-dev/      # Development environment
+├── nextjs-staging/  # Staging environment
+└── nextjs-stable/   # Production environment
+```
+
+#### Deployment Commands
+
+**1. Download and deploy specific version:**
+```bash
+# Deploy to staging
+./scripts/deploy.sh v1.2.3
+
+# Deploy to custom directory with environment
+APP_NAME=nextjs-staging APP_CWD=/home/buarac/app/nextjs-staging ./scripts/deploy.sh v1.2.3
+```
+
+**2. Start applications with PM2:**
+```bash
+# Development
+APP_NAME=nextjs-dev APP_CWD=/home/buarac/app/nextjs-dev pm2 start ecosystem.config.js
+
+# Staging  
+APP_NAME=nextjs-staging APP_CWD=/home/buarac/app/nextjs-staging pm2 start ecosystem.config.js --env staging
+
+# Production
+APP_NAME=nextjs-stable APP_CWD=/home/buarac/app/nextjs-stable pm2 start ecosystem.config.js --env stable
+```
+
+#### Environment Variables
+
+**System Variables:**
+- `APP_NAME`: PM2 application name
+- `APP_CWD`: Application working directory
+- `APP_VERSION`: Application version (displayed in pm2 list)
+
+**Database Configuration:**
+- `SCRATCH_DATABASE_URL`: Development database
+- `STAGING_DATABASE_URL`: Staging database  
+- `STABLE_DATABASE_URL`: Production database
+
+**Environment Files:**
+Each environment can have its own `.env.production` file for secrets:
+```env
+DATABASE_URL=postgresql://user:pass@localhost/db_name
+NEXTAUTH_SECRET=your-secret-key
+GITHUB_CLIENT_SECRET=your-oauth-secret
+```
+
+#### PM2 Management Commands
+```bash
+# List all applications
+pm2 list
+
+# View logs
+pm2 logs nextjs-staging
+
+# Restart application
+pm2 restart nextjs-staging
+
+# Stop application  
+pm2 stop nextjs-staging
+
+# Delete application
+pm2 delete nextjs-staging
+
+# Monitoring dashboard
+pm2 monit
+```
 
 ## 📦 Available Scripts
 
