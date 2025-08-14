@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/buarac/nextjs_template/compare/v1.2.0...v1.2.1) (2025-08-14)
+
+
+### Bug Fixes
+
+* suppression du repertoire src/generated lors de la création du build ([9189e05](https://github.com/buarac/nextjs_template/commit/9189e05e1da85f5923f8b58c03334f0489510748))
+
 # [1.2.0](https://github.com/buarac/nextjs_template/compare/v1.1.0...v1.2.0) (2025-08-14)
 
 
