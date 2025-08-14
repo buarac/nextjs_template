@@ -3,7 +3,7 @@ module.exports = {
     name: 'nextjs-template',
     script: 'npm',
     args: 'run start',
-    cwd: '/home/user/mon-app',
+    cwd: '/home/buarac/app/nextjs_template/scripts/myapp',
     instances: 1,
     exec_mode: 'fork',
     
