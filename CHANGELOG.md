@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/buarac/nextjs_template/compare/v1.4.1...v1.5.0) (2025-08-14)
+
+
+### Features
+
+* Make app metadata configurable via environment variables ([1ccda92](https://github.com/buarac/nextjs_template/commit/1ccda92273a260d7cccc21e66b88fdf93969eed5))
+
 ## [1.4.1](https://github.com/buarac/nextjs_template/compare/v1.4.0...v1.4.1) (2025-08-14)
 
 
