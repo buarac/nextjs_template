@@ -50,7 +50,7 @@ jobs:
           
       - name: Create build artifact
         run: |
-          tar -czf build.tar.gz .next package.json package-lock.json prisma/ ecosystem.config.js scripts/ src/generated/ node_modules/@prisma/ node_modules/.prisma/
+          tar -czf build.tar.gz .next package.json package-lock.json prisma/ ecosystem.config.js scripts/ node_modules/@prisma/ node_modules/.prisma/
           
       - name: Upload build artifact to release
         if: steps.version.outputs.version != 'unknown'
