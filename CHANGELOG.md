@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/buarac/nextjs_template/compare/v1.1.0...v1.2.0) (2025-08-14)
+
+
+### Features
+
+* ajout de creation d'un build a la fin de la release ([07ad869](https://github.com/buarac/nextjs_template/commit/07ad869f1887ce083f3ac929d9ca9b540ba24a7f))
+
 # [1.1.0](https://github.com/buarac/nextjs_template/compare/v1.0.0...v1.1.0) (2025-08-12)
 
 
