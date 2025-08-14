@@ -7,7 +7,7 @@ set -e  # Exit on error
 
 VERSION=${1:-"latest"}
 REPO="buarac/nextjs_template"
-APP_DIR="/home/user/mon-app"
+APP_DIR="/home/buarac/app/nextjs_template/scripts/myapp"
 APP_NAME="nextjs-template"
 
 echo "🚀 Déploiement de la version: $VERSION"
@@ -41,7 +41,9 @@ fi
 
 # 6. Migrations Prisma
 echo "🗃️ Migrations de base de données..."
+cp .env.production .env
 npx prisma migrate deploy
+rm .env
 
 # 7. Gérer l'application avec PM2
 echo "🔄 Gestion PM2..."
@@ -56,7 +58,7 @@ fi
 pm2 delete "$APP_NAME" 2>/dev/null || echo "ℹ️  Application $APP_NAME n'était pas en cours d'exécution"
 
 # Créer le dossier logs
-mkdir -p logs
+mkdir -p ./logs
 
 # Démarrer l'application avec PM2 (config file ou commande simple)
 echo "🌟 Démarrage avec PM2..."
