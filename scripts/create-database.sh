@@ -9,6 +9,68 @@
 
 set -e  # Exit on error
 
+# Afficher l'aide si demandé
+if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+    echo "🗃️  Script de création de base de données PostgreSQL"
+    echo ""
+    echo "📋 Usage:"
+    echo "  ./scripts/create-database.sh [PROJECT_NAME] [ENV] [NUC_HOST]"
+    echo ""
+    echo "📝 Paramètres:"
+    echo "  PROJECT_NAME    Nom du projet (défaut: nom du dossier courant)"
+    echo "                  Exemple: mon-app, ecommerce-site"
+    echo ""
+    echo "  ENV             Environnement: dev|staging|stable (défaut: dev)"
+    echo "                  - dev     : Base de développement"
+    echo "                  - staging : Base de pré-production"  
+    echo "                  - stable  : Base de production"
+    echo ""
+    echo "  NUC_HOST        IP du serveur PostgreSQL (défaut: depuis .env.nuc)"
+    echo "                  Exemple: 192.168.1.100"
+    echo ""
+    echo "🔧 Exemples d'utilisation:"
+    echo "  ./scripts/create-database.sh                           # Utilise le nom du dossier + dev"
+    echo "  ./scripts/create-database.sh mon-app                   # Base: mon-app-dev"
+    echo "  ./scripts/create-database.sh mon-app staging           # Base: mon-app-staging"
+    echo "  ./scripts/create-database.sh shop stable 192.168.1.50 # Base: shop-stable sur IP spécifique"
+    echo ""
+    echo "⚠️  Modes de sécurité:"
+    echo "  ./scripts/create-database.sh --force mon-app prod      # Force la recréation (DANGER !)"
+    echo "  ./scripts/create-database.sh --check mon-app prod      # Vérification seulement"
+    echo "  ./scripts/create-database.sh --delete mon-app prod     # Supprime base et utilisateur"
+    echo "  ./scripts/create-database.sh --check mon-app prod      # Vérification seulement"
+    echo ""
+    echo "📋 Prérequis:"
+    echo "  - Fichier .env.nuc configuré avec l'IP de votre NUC"
+    echo "  - Client PostgreSQL installé (brew install libpq)"
+    echo "  - Accès réseau au serveur PostgreSQL"
+    echo ""
+    echo "🎯 Ce que fait le script:"
+    echo "  ✅ Crée la base de données: PROJECT_NAME-ENV"
+    echo "  ✅ Crée l'utilisateur: user_PROJECT_NAME_ENV"
+    echo "  ✅ Génère un mot de passe sécurisé"
+    echo "  ✅ Accorde toutes les permissions (Prisma compatible)"
+    echo "  ✅ Met à jour le fichier .env automatiquement"
+    exit 0
+fi
+
+# Gestion des modes de sécurité
+FORCE_MODE=false
+CHECK_ONLY=false
+DELETE_MODE=false
+
+# Analyser les paramètres pour les modes
+if [[ "$1" == "--force" ]]; then
+    FORCE_MODE=true
+    shift
+elif [[ "$1" == "--check" ]]; then
+    CHECK_ONLY=true
+    shift
+elif [[ "$1" == "--delete" ]]; then
+    DELETE_MODE=true
+    shift
+fi
+
 # Configuration
 PROJECT_NAME=${1:-$(basename $(pwd))}
 ENV=${2:-"dev"}
@@ -94,15 +156,135 @@ fi
 
 echo "✅ Connexion au serveur PostgreSQL réussie"
 
+# Mode suppression
+if [ "$DELETE_MODE" = true ]; then
+    echo ""
+    echo "🗑️  Mode suppression activé"
+    echo "📋 Cible :"
+    echo "   Base : $DB_NAME"
+    echo "   Utilisateur : $DB_USER"
+    echo "   Serveur : $NUC_HOST:$NUC_PORT"
+    echo ""
+    
+    # Protection pour staging/prod
+    if [[ "$ENV" =~ ^(staging|stable)$ ]]; then
+        echo "🚨 ATTENTION : Suppression d'une base de $ENV !"
+        echo "   Cela supprimera TOUTES LES DONNÉES définitivement."
+        echo ""
+        echo "Pour confirmer, tapez le nom de la base : $DB_NAME"
+        read -r confirmation
+        if [ "$confirmation" != "$DB_NAME" ]; then
+            echo "❌ Confirmation incorrecte. Suppression annulée."
+            exit 1
+        fi
+    else
+        echo "⚠️  Supprimer la base de développement ? [y/N]"
+        read -r response
+        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+            echo "❌ Suppression annulée"
+            exit 0
+        fi
+    fi
+    
+    echo "🗑️  Suppression en cours..."
+    
+    psql "postgresql://$NUC_USER@$NUC_HOST:$NUC_PORT/postgres" <<EOF
+-- Terminer les connexions actives à la base de données
+SELECT pg_terminate_backend(pid) 
+FROM pg_stat_activity 
+WHERE datname = '$DB_NAME' AND pid <> pg_backend_pid();
+
+-- Supprimer la base de données
+DROP DATABASE IF EXISTS "$DB_NAME";
+
+-- Supprimer l'utilisateur
+DROP USER IF EXISTS "$DB_USER";
+
+-- Afficher le résultat
+SELECT 'Base de données et utilisateur supprimés avec succès' AS status;
+\\q
+EOF
+    
+    echo ""
+    echo "✅ Suppression terminée !"
+    echo "📋 Éléments supprimés :"
+    echo "   ✅ Base de données : $DB_NAME"
+    echo "   ✅ Utilisateur : $DB_USER"
+    echo ""
+    echo "💡 Pour recréer, utilisez :"
+    echo "   ./scripts/create-database.sh $PROJECT_NAME $ENV"
+    exit 0
+fi
+
+# Vérifier si la base de données existe déjà
+DB_EXISTS=$(psql "postgresql://$NUC_USER@$NUC_HOST:$NUC_PORT/postgres" -t -c "SELECT 1 FROM pg_database WHERE datname='$DB_NAME';" 2>/dev/null | xargs)
+
+if [ "$DB_EXISTS" = "1" ]; then
+    echo "⚠️  La base de données '$DB_NAME' existe déjà sur $NUC_HOST"
+    
+    # Mode vérification seulement
+    if [ "$CHECK_ONLY" = true ]; then
+        echo "🔍 Mode vérification - La base existe, aucune action"
+        exit 0
+    fi
+    
+    if [ "$FORCE_MODE" = false ] && [[ "$ENV" =~ ^(staging|stable)$ ]]; then
+        echo ""
+        echo "🚨 ATTENTION : Vous tentez de recréer une base de $ENV !"
+        echo "   Cela supprimera TOUTES LES DONNÉES existantes."
+        echo ""
+        echo "   Base de données : $DB_NAME"
+        echo "   Serveur         : $NUC_HOST:$NUC_PORT"
+        echo ""
+        echo "⚠️  Pour continuer, utilisez :"
+        echo "   --force  : Force la recréation (supprime les données)"
+        echo "   --check  : Vérification seulement (recommandé d'abord)"
+        echo ""
+        echo "Exemple :"
+        echo "   ./scripts/create-database.sh --force $PROJECT_NAME $ENV"
+        exit 1
+    elif [ "$ENV" = "dev" ]; then
+        if [ "$FORCE_MODE" = true ]; then
+            echo "🚨 Mode --force activé pour développement"
+            echo "   La base sera recréée sans confirmation"
+        else
+            echo ""
+            echo "🔄 La base de développement existe. Recréer ? [y/N]"
+            echo "💡 Utilisez --check pour vérifier sans action"
+            read -r response
+            if [[ ! "$response" =~ ^[Yy]$ ]]; then
+                echo "❌ Opération annulée"
+                exit 0
+            fi
+        fi
+    fi
+else
+    # Base n'existe pas
+    if [ "$CHECK_ONLY" = true ]; then
+        echo "✅ La base de données '$DB_NAME' n'existe pas sur $NUC_HOST"
+        echo "🔍 Mode vérification - Aucune action"
+        exit 0
+    fi
+fi
+
 # Création de la base de données et de l'utilisateur
-echo "🏗️  Création de la base de données et de l'utilisateur..."
+if [ "$DB_EXISTS" = "1" ]; then
+    echo "🏗️  Suppression et recréation de la base de données..."
+else
+    echo "🏗️  Création de la base de données et de l'utilisateur..."
+fi
 
 psql "postgresql://$NUC_USER@$NUC_HOST:$NUC_PORT/postgres" <<EOF
--- Supprimer l'utilisateur s'il existe déjà (pour recréation)
-DROP USER IF EXISTS "$DB_USER";
+-- Terminer les connexions actives à la base de données
+SELECT pg_terminate_backend(pid) 
+FROM pg_stat_activity 
+WHERE datname = '$DB_NAME' AND pid <> pg_backend_pid();
 
 -- Supprimer la base de données si elle existe déjà (pour recréation)
 DROP DATABASE IF EXISTS "$DB_NAME";
+
+-- Supprimer l'utilisateur s'il existe déjà (pour recréation)
+DROP USER IF EXISTS "$DB_USER";
 
 -- Créer l'utilisateur avec mot de passe
 CREATE USER "$DB_USER" WITH PASSWORD '$DB_PASSWORD';

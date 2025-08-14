@@ -125,9 +125,36 @@ NUC_PORT="5432"            # Port PostgreSQL
 
 #### Création automatique des bases de données
 
-Le template inclut des scripts automatisés pour créer les bases de données avec toutes les permissions nécessaires :
+Le template inclut des scripts automatisés pour créer les bases de données avec toutes les permissions nécessaires.
 
-**Le script fait automatiquement :**
+#### Guide d'utilisation du script
+
+**Voir l'aide complète :**
+```bash
+./scripts/create-database.sh --help
+```
+
+**Exemples concrets :**
+```bash
+# Utiliser les valeurs par défaut (nom du dossier + dev)
+./scripts/create-database.sh
+
+# Spécifier un nom de projet
+./scripts/create-database.sh mon-super-projet
+
+# Créer une base pour staging
+./scripts/create-database.sh mon-projet staging
+
+# Créer une base de production sur un serveur spécifique
+./scripts/create-database.sh mon-projet stable 192.168.1.100
+```
+
+**Paramètres du script :**
+- `PROJECT_NAME` : Nom du projet (défaut: nom du dossier)
+- `ENV` : Environnement `dev|staging|stable` (défaut: dev)  
+- `NUC_HOST` : IP du serveur (défaut: depuis `.env.nuc`)
+
+#### Ce que fait automatiquement le script
 ✅ Création de la base : `mon-projet-dev`  
 ✅ Création de l'utilisateur : `user_mon_projet_dev`  
 ✅ Génération d'un mot de passe sécurisé  
