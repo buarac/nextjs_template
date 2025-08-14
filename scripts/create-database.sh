@@ -289,6 +289,9 @@ DROP USER IF EXISTS "$DB_USER";
 -- Créer l'utilisateur avec mot de passe
 CREATE USER "$DB_USER" WITH PASSWORD '$DB_PASSWORD';
 
+-- Accorder la permission CREATEDB pour Prisma (shadow database)
+ALTER USER "$DB_USER" CREATEDB;
+
 -- Créer la base de données avec l'utilisateur comme propriétaire
 CREATE DATABASE "$DB_NAME" OWNER "$DB_USER";
 
@@ -310,8 +313,6 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO "$DB_USER";
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO "$DB_USER";
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO "$DB_USER";
 
--- Permissions spéciales pour Prisma (shadow database)
-GRANT CREATE ON DATABASE "$DB_NAME" TO "$DB_USER";
 
 -- Afficher les informations
 SELECT 'Base de données créée avec succès' AS status;
@@ -361,6 +362,12 @@ else
     echo "# Base de données générée automatiquement" >> "$ENV_FILE"
     echo "DATABASE_URL=\"$DATABASE_URL\"" >> "$ENV_FILE"
     echo "📝 DATABASE_URL ajoutée à $ENV_FILE"
+fi
+
+# Synchroniser avec .env pour Prisma CLI (si environnement dev)
+if [ "$ENV" = "dev" ] && [ -f ".env.local" ]; then
+    cp .env.local .env
+    echo "📝 Fichier .env synchronisé avec .env.local (requis pour Prisma CLI)"
 fi
 
 echo ""
